@@ -1,36 +1,84 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🧠 Claude's Brain
 
-## Getting Started
+**The Cortex** — watch every file Claude Code reads *fire into context in the order it's loaded*, then click any one to view and edit it. A local-only Next.js dashboard that scans your filesystem and animates the full config hierarchy as a neural cascade: present files flash green and hold a synaptic glow, missing files flash red and stay dark (a dead synapse).
 
-First, run the development server:
+![scope: global + current project](https://img.shields.io/badge/scope-global%20%2B%20project-22c55e)
+
+## Why
+
+Claude Code loads context from a sprawl of files across `~/.claude/`, `~/.claude.json` and per-project `.claude/` directories. It's hard to know what's actually in play — and in what order. This gives you a single animated screen: a vertical "cortex" spine carries a traveling pulse down through ordered strata (global → project → on-demand), lighting each file as it's read.
+
+The app has two tabs:
+- **Cortex** — the file map below.
+- **Cache** — an interactive, faithful model of Anthropic **prompt caching**: a tools→system→messages prefix bar that stays warm (green) and decays to cold (red), a TTL clock (5-min default / 1-hour max), and a cost ledger (read 0.1× · write 1.25×/2× · miss). Drive it with *Send a turn*, *Wait*, *Edit system / Change tools / Switch model* (watch prefix-tier invalidation), and a **"Walk away 3h"** preset that demonstrates the cold-prefill hit (~$1 vs ~$0.10 on a 200k prefix). The cost math lives in `lib/cache-model.ts` (unit-tested).
+
+## The visualization
+
+- **Read-order sweep** — files fire one-by-one in load sequence; the left rail counts `07 / 23` and names the file currently being read.
+- **Present 🟢 / Missing 🔴** — present files pulse green; missing core files raise a banner; on-demand extensions (commands/agents/skills/hooks) reveal last, set apart since they only load when invoked.
+- **How each file is used** — every node is tagged by *mechanism*, an axis orthogonal to scope: **in context** (injected into the prompt as text — `CLAUDE.md`, `AGENTS.md`, `MEMORY.md`, `rules/`), **harness** (configures permissions/hooks/env/MCP, *not* prompt text — `settings.json`, `.mcp.json`, `keybindings.json`, `~/.claude.json`), or **on invoke** (discovered now, content loads only when used — `commands/`, `agents/`, `skills/`, `hooks/`). The firing readout adapts its verb to match ("Reading into context" vs "Configuring harness" vs "Registering").
+- **Click to view, edit & create** — click any node to open its contents in a modal and **save real edits to disk**. Missing files can be *created* (e.g. a `CLAUDE.local.md`); open a directory and use **"+ New file in this folder"** to create a brand-new rule / command / subagent / memory file. Editing a symlink (like global `CLAUDE.md`) warns that it writes through to the real target. Writes are confined to Claude's own config by an allowlist — it physically cannot touch anything outside `~/.claude` or the active project's tracked paths.
+- **Detail per node** — symlink targets, sizes, mtimes, directory item counts, `core` tags.
+- **Replay** any time; respects `prefers-reduced-motion` (renders the full map instantly).
+- Built with **framer-motion** (`motion`), Tailwind v4, and a distinctive Bricolage Grotesque display face.
+
+> Read order is approximate — it reflects Claude Code's documented load hierarchy, not byte-exact timing.
+
+## What it tracks
+
+**Global (`~/.claude/`)**
+- `CLAUDE.md` (global instructions) · `memory/MEMORY.md` + `memory/` · `settings.json` · `settings.local.json` · `keybindings.json`
+- `rules/` · `agents/` · `commands/` · `skills/` · `hooks/`
+- `~/.claude.json` (home-level MCP server registry)
+
+**Project (`<project>/`)**
+- `CLAUDE.md` · `CLAUDE.local.md` · `AGENTS.md`
+- `.claude/settings.json` · `.claude/settings.local.json` · `.mcp.json`
+- `.claude/rules/` · `.claude/agents/` · `.claude/commands/` · `.claude/skills/` · `.claude/hooks/`
+
+The full catalog lives in [`lib/catalog.ts`](lib/catalog.ts) — add or edit entries there.
+
+## Run it
+
+**One-time setup** — make `claude-brain` available from any terminal:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm link          # registers the global `claude-brain` command
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+**Every time after** — from anywhere:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+claude-brain      # builds once on first run, then starts instantly + opens your browser
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+It auto-picks a free port and opens the tab for you. `Ctrl-C` to stop.
 
-## Learn More
+```
+claude-brain --no-open     # just print the URL, don't open a browser
+claude-brain --port 4317   # use a specific port
+claude-brain --rebuild     # force a fresh production build
+```
 
-To learn more about Next.js, take a look at the following resources:
+Prefer not to install globally? `npx . ` from the repo, or `npm run launch`. The old `npm run dev` still works for development with hot-reload.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+In the app: leave the project field blank to map **global only**, or pick a project from the quick-chips (auto-populated from `~/code`) / type any path (`~` is expanded) to add the **project** scope.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## How it works
 
-## Deploy on Vercel
+- `lib/catalog.ts` — the canonical map of paths Claude Code reads, each tagged with `tier`, `loadType` (`startup` / `on-demand`) and a read `order`. **Single source of truth** — add a `CatalogEntry` here and the scanner + cortex pick it up automatically.
+- `lib/scan.ts` — `lstat`/`stat`/`readlink` each entry: existence, symlink target, size, mtime, directory child counts.
+- `lib/file-access.ts` — the editor's security boundary: `checkAccess` permits a path only if it's a tracked file or inside a tracked dir (resolved + traversal-checked).
+- `app/api/scan/route.ts` — resolves a project path and runs the scanner (Node runtime).
+- `app/api/file/route.ts` — `GET` reads a file / lists a dir; `PUT` writes to disk. Both gated by `checkAccess`.
+- `app/components/file-modal.tsx` — the click-to-edit modal.
+- `app/api/projects/route.ts` — lists `~/code` subdirectories for the quick-pick chips.
+- `app/components/cortex.tsx` — the animated neural visualization (framer-motion sequencing engine).
+- `app/page.tsx` — header, project picker, stats; renders the Cortex.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Nothing is sent or deployed. It reads your local disk and renders in the browser; the only writes are edits you explicitly save through the modal, and only to Claude's own config files (enforced by `lib/file-access.ts`).
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Stack
+
+Next.js 16 · React 19 · Tailwind CSS v4 · framer-motion (`motion`) · TypeScript. Local-first by design (needs filesystem access, so it is **not** meant for Vercel hosting).
