@@ -21,8 +21,8 @@ function nodeState(r: ScanResult, step: number): NodeState {
   return r.exists ? "present" : "missing";
 }
 
-const GREEN = "#22c55e";
-const RED = "#f43f5e";
+const GREEN = "#4d7c0f"; // sage — present / warm
+const RED = "#c0392b"; // terracotta — missing / cold
 
 function Synapse({
   r,
@@ -44,7 +44,7 @@ function Synapse({
   if (size) meta.push(size);
 
   const lit = state === "present" || state === "firing";
-  const ring = present ? "rgba(34,197,94," : "rgba(244,63,94,";
+  const ring = present ? "rgba(77,124,15," : "rgba(192,57,43,";
 
   const open = () =>
     onOpen({
@@ -60,7 +60,7 @@ function Synapse({
       layout
       initial={false}
       animate={{
-        opacity: state === "pending" ? 0.32 : 1,
+        opacity: state === "pending" ? 0.5 : 1,
         scale: state === "firing" ? 1.035 : 1,
         x: 0,
       }}
@@ -74,22 +74,22 @@ function Synapse({
           open();
         }
       }}
-      className="group relative flex cursor-pointer items-start gap-3 rounded-xl border px-3.5 py-2.5 backdrop-blur-sm outline-none transition-shadow focus-visible:ring-2 focus-visible:ring-violet-400/70"
+      className="group relative flex cursor-pointer items-start gap-3 rounded-xl border px-3.5 py-2.5 outline-none transition-shadow focus-visible:ring-2 focus-visible:ring-amber-500/60"
       style={{
         borderColor: lit
-          ? `${ring}0.55)`
+          ? `${ring}0.45)`
           : state === "missing"
-            ? "rgba(244,63,94,0.30)"
-            : "rgba(148,163,184,0.16)",
+            ? "rgba(192,57,43,0.32)"
+            : "var(--line)",
         background: lit
-          ? `linear-gradient(100deg, ${ring}0.10), rgba(8,11,18,0.7))`
-          : "rgba(8,11,18,0.55)",
+          ? `linear-gradient(100deg, ${ring}0.07), #ffffff)`
+          : "#ffffff",
         boxShadow:
           state === "firing"
-            ? `0 0 0 1px ${ring}0.5), 0 0 28px ${ring}0.45)`
+            ? `0 0 0 1px ${ring}0.4), 0 8px 26px -10px ${ring}0.45)`
             : state === "present"
-              ? `0 0 18px ${ring}0.16)`
-              : "none",
+              ? `0 8px 24px -16px ${ring}0.55)`
+              : "0 1px 2px rgba(28,25,23,0.04)",
       }}
       title={`${r.description}\n${r.path}`}
     >
@@ -98,11 +98,11 @@ function Synapse({
         {state === "firing" && (
           <motion.span
             className="pointer-events-none absolute inset-0 rounded-xl"
-            initial={{ opacity: 0.7, scale: 0.85 }}
+            initial={{ opacity: 0.6, scale: 0.85 }}
             animate={{ opacity: 0, scale: 1.4 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.7, ease: "easeOut" }}
-            style={{ boxShadow: `0 0 30px 4px ${ring}0.6)`, border: `1px solid ${ring}0.7)` }}
+            style={{ boxShadow: `0 0 26px 3px ${ring}0.5)`, border: `1px solid ${ring}0.6)` }}
           />
         )}
       </AnimatePresence>
@@ -112,7 +112,7 @@ function Synapse({
         {state !== "pending" && present && (
           <motion.span
             className="absolute inset-0 rounded-full"
-            animate={{ scale: [1, 1.9, 1], opacity: [0.5, 0, 0.5] }}
+            animate={{ scale: [1, 1.9, 1], opacity: [0.45, 0, 0.45] }}
             transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
             style={{ background: GREEN }}
           />
@@ -120,8 +120,8 @@ function Synapse({
         <span
           className="relative h-2.5 w-2.5 rounded-full"
           style={{
-            background: state === "pending" ? "#334155" : dotColor,
-            boxShadow: state === "pending" ? "none" : `0 0 10px ${dotColor}`,
+            background: state === "pending" ? "#d6cfc2" : dotColor,
+            boxShadow: state === "pending" ? "none" : `0 0 8px ${dotColor}55`,
           }}
         />
       </span>
@@ -130,22 +130,22 @@ function Synapse({
         <div className="flex flex-wrap items-center gap-1.5">
           <span
             className="truncate font-mono text-[13px] font-medium"
-            style={{ color: state === "pending" ? "#64748b" : present ? "#eaf2ff" : "#fda4af" }}
+            style={{ color: state === "pending" ? "#a8a29e" : present ? "#1c1917" : "#a13a2c" }}
           >
             {r.label}
           </span>
           {r.importance === "core" && (
-            <span className="rounded bg-slate-600/40 px-1.5 py-px text-[9px] font-bold uppercase tracking-wider text-slate-300">
+            <span className="rounded bg-stone-200 px-1.5 py-px text-[9px] font-bold uppercase tracking-wider text-stone-600">
               core
             </span>
           )}
           {r.isSymlink && (
-            <span className="rounded bg-amber-400/15 px-1.5 py-px text-[9px] font-bold uppercase tracking-wider text-amber-300">
+            <span className="rounded bg-amber-500/15 px-1.5 py-px text-[9px] font-bold uppercase tracking-wider text-amber-700">
               symlink
             </span>
           )}
           {state === "missing" && (
-            <span className="rounded bg-rose-500/15 px-1.5 py-px text-[9px] font-bold uppercase tracking-wider text-rose-300">
+            <span className="rounded bg-[#fbe3da] px-1.5 py-px text-[9px] font-bold uppercase tracking-wider text-[#9a3412]">
               missing
             </span>
           )}
@@ -153,18 +153,18 @@ function Synapse({
             className="rounded px-1.5 py-px text-[9px] font-bold uppercase tracking-wider"
             style={{
               color: MECHANISMS[r.mechanism].accent,
-              background: `${MECHANISMS[r.mechanism].accent}1f`,
+              background: `${MECHANISMS[r.mechanism].accent}1a`,
             }}
             title={MECHANISMS[r.mechanism].blurb}
           >
             {MECHANISMS[r.mechanism].label}
           </span>
         </div>
-        <p className="mt-0.5 truncate text-[11px] leading-snug text-slate-500">
+        <p className="mt-0.5 truncate text-[11px] leading-snug text-stone-500">
           {r.isSymlink && r.symlinkTarget ? `→ ${r.symlinkTarget}` : r.description}
         </p>
         {meta.length > 0 && lit && (
-          <p className="mt-1 font-mono text-[10px] text-slate-600">{meta.join(" · ")}</p>
+          <p className="mt-1 font-mono text-[10px] text-stone-400">{meta.join(" · ")}</p>
         )}
       </div>
 
@@ -179,7 +179,7 @@ function Synapse({
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
-          className="text-slate-500 opacity-0 transition-opacity group-hover:opacity-100"
+          className="text-stone-400 opacity-0 transition-opacity group-hover:opacity-100"
           aria-hidden
         >
           {r.type === "dir" ? (
@@ -193,7 +193,7 @@ function Synapse({
         </svg>
         <span
           className="font-mono text-[10px] tabular-nums"
-          style={{ color: state === "pending" ? "#475569" : accent }}
+          style={{ color: state === "pending" ? "#c4b8a3" : accent }}
         >
           {String(r.order).padStart(2, "0")}
         </span>
@@ -269,26 +269,26 @@ export default function Cortex({
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-[230px_minmax(0,1fr)]">
         {/* ── Readout rail ── */}
         <aside className="lg:sticky lg:top-6 lg:self-start">
-          <div className="rounded-2xl border border-slate-800/70 bg-slate-950/50 p-5">
-            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">
+          <div className="rounded-2xl border border-line bg-paper p-5 shadow-paper">
+            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-stone-400">
               {firing ? MECHANISMS[firing.mechanism].verb : startupDone ? "Context loaded" : "Reading into context"}
             </p>
             <div className="mt-2 flex items-baseline gap-2 font-display">
               <span
-                className="text-5xl font-extrabold tabular-nums"
+                className="text-5xl font-bold tabular-nums"
                 style={{ color: firing ? MECHANISMS[firing.mechanism].accent : GREEN }}
               >
                 {String(Math.min(step, total)).padStart(2, "0")}
               </span>
-              <span className="text-lg font-semibold text-slate-600">/ {String(total).padStart(2, "0")}</span>
+              <span className="text-lg font-semibold text-stone-400">/ {String(total).padStart(2, "0")}</span>
             </div>
 
-            <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-slate-800/80">
+            <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-stone-200">
               <motion.div
                 className="h-full rounded-full"
                 animate={{ width: `${(Math.min(step, total) / Math.max(total, 1)) * 100}%` }}
                 transition={{ ease: "easeOut", duration: 0.3 }}
-                style={{ background: "linear-gradient(90deg,#a78bfa,#22d3ee,#22c55e)" }}
+                style={{ background: "linear-gradient(90deg,#d97706,#b45309,#4d7c0f)" }}
               />
             </div>
 
@@ -303,11 +303,11 @@ export default function Cortex({
                 >
                   {firing ? (
                     <>
-                      <p className="truncate font-mono text-[13px] text-slate-100">{firing.label}</p>
-                      <p className="truncate text-[11px] text-slate-500">{firing.tier}</p>
+                      <p className="truncate font-mono text-[13px] text-foreground">{firing.label}</p>
+                      <p className="truncate text-[11px] text-stone-500">{firing.tier}</p>
                     </>
                   ) : (
-                    <p className="text-[13px] text-slate-400">
+                    <p className="text-[13px] text-stone-500">
                       {presentCount} present · {total - presentCount} missing
                     </p>
                   )}
@@ -317,7 +317,7 @@ export default function Cortex({
 
             <button
               onClick={play}
-              className="group mt-5 flex w-full items-center justify-center gap-2 rounded-lg border border-slate-700 bg-slate-900/60 px-3 py-2 text-[13px] font-medium text-slate-200 transition-colors hover:border-emerald-500/50 hover:bg-emerald-500/10 hover:text-emerald-200"
+              className="group mt-5 flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg border border-line bg-paper-sunk px-3 py-2 text-[13px] font-semibold text-stone-700 transition-colors hover:border-amber-500/50 hover:bg-amber-500/10 hover:text-amber-800"
             >
               <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" className="transition-transform group-hover:scale-110">
                 <path d="M8 5v14l11-7z" />
@@ -325,19 +325,19 @@ export default function Cortex({
               Replay sequence
             </button>
 
-            <div className="mt-5 space-y-1.5 border-t border-slate-800/70 pt-4 text-[11px]">
-              <p className="mb-1 text-[9px] font-bold uppercase tracking-[0.18em] text-slate-600">Status</p>
+            <div className="mt-5 space-y-1.5 border-t border-line pt-4 text-[11px]">
+              <p className="mb-1 text-[9px] font-bold uppercase tracking-[0.18em] text-stone-400">Status</p>
               <Legend color={GREEN} label="Present — fires green" />
               <Legend color={RED} label="Missing — dead synapse" />
-              <Legend color="#475569" label="Not yet read" />
+              <Legend color="#c4b8a3" label="Not yet read" />
             </div>
-            <div className="mt-4 space-y-1.5 border-t border-slate-800/70 pt-4 text-[11px]">
-              <p className="mb-1 text-[9px] font-bold uppercase tracking-[0.18em] text-slate-600">How it&apos;s used</p>
+            <div className="mt-4 space-y-1.5 border-t border-line pt-4 text-[11px]">
+              <p className="mb-1 text-[9px] font-bold uppercase tracking-[0.18em] text-stone-400">How it&apos;s used</p>
               <Legend color={MECHANISMS.prompt.accent} label="In context — injected as prompt text" />
               <Legend color={MECHANISMS.harness.accent} label="Harness — configures the session" />
               <Legend color={MECHANISMS.invoke.accent} label="On invoke — loads only when used" />
             </div>
-            <p className="mt-4 text-[10px] leading-relaxed text-slate-600">
+            <p className="mt-4 text-[10px] leading-relaxed text-stone-400">
               Read order is approximate — it reflects Claude Code&apos;s load hierarchy, not byte-exact timing.
             </p>
           </div>
@@ -350,8 +350,8 @@ export default function Cortex({
             className="absolute bottom-2 left-4 top-2 w-[2px] rounded-full sm:left-6"
             style={{
               background:
-                "linear-gradient(180deg,#a78bfa 0%,#818cf8 22%,#60a5fa 40%,#22d3ee 62%,#2dd4bf 80%,#334155 100%)",
-              opacity: 0.55,
+                "linear-gradient(180deg,#b45309 0%,#c2410c 22%,#92400e 40%,#4d7c0f 70%,#3f6212 85%,#d6ccb8 100%)",
+              opacity: 0.7,
             }}
           />
           {/* traveling pulse */}
@@ -360,7 +360,7 @@ export default function Cortex({
               className="absolute left-4 z-10 h-3 w-3 -translate-x-[5px] rounded-full sm:left-6"
               animate={{ top: `${sweepFrac * 100}%` }}
               transition={{ type: "spring", stiffness: 120, damping: 18 }}
-              style={{ background: "#fff", boxShadow: "0 0 16px 4px rgba(196,181,253,0.9)" }}
+              style={{ background: "#fff", boxShadow: "0 0 14px 4px rgba(217,119,6,0.6)" }}
             />
           )}
 
@@ -375,19 +375,19 @@ export default function Cortex({
                   <span
                     className="absolute -left-[26px] top-1.5 h-2.5 w-2.5 rounded-full sm:-left-[34px]"
                     style={{
-                      background: tierReached ? tier.accent : "#1e293b",
-                      boxShadow: tierReached ? `0 0 12px ${tier.accent}` : "none",
+                      background: tierReached ? tier.accent : "#ddd3c0",
+                      boxShadow: tierReached ? `0 0 10px ${tier.accent}80` : "none",
                       transition: "all .3s",
                     }}
                   />
                   <header className="mb-2.5">
                     <h3
                       className="font-display text-sm font-bold tracking-tight"
-                      style={{ color: tierReached ? tier.accent : "#64748b" }}
+                      style={{ color: tierReached ? tier.accent : "#a8a29e" }}
                     >
                       {tier.name}
                     </h3>
-                    <p className="text-[11px] text-slate-600">{tier.blurb}</p>
+                    <p className="text-[11px] text-stone-400">{tier.blurb}</p>
                   </header>
                   <div className="space-y-2">
                     {items.map((r) => (
@@ -402,25 +402,25 @@ export default function Cortex({
             {projectActive || onDemand.length > 0 ? (
               <section className="relative">
                 <span
-                  className="absolute -left-[26px] top-1.5 h-2.5 w-2.5 rounded-full border border-slate-600 sm:-left-[34px]"
-                  style={{ background: startupDone ? "#475569" : "#0f172a" }}
+                  className="absolute -left-[26px] top-1.5 h-2.5 w-2.5 rounded-full border border-line-strong sm:-left-[34px]"
+                  style={{ background: startupDone ? "#b3a892" : "#e7dfcf" }}
                 />
                 <header className="mb-2.5">
-                  <h3 className="font-display text-sm font-bold tracking-tight text-slate-400">
+                  <h3 className="font-display text-sm font-bold tracking-tight text-stone-500">
                     On-Demand Extensions
                   </h3>
-                  <p className="text-[11px] text-slate-600">
+                  <p className="text-[11px] text-stone-400">
                     Not in the boot sequence — pulled in only when a command, agent, skill or hook fires.
                   </p>
                 </header>
                 <motion.div
                   className="grid grid-cols-1 gap-2 sm:grid-cols-2"
                   initial={false}
-                  animate={{ opacity: startupDone ? 1 : 0.4 }}
+                  animate={{ opacity: startupDone ? 1 : 0.45 }}
                   transition={{ duration: 0.4 }}
                 >
                   {onDemand.map((r) => (
-                    <Synapse key={r.id} r={r} state={nodeState(r, startupDone ? total : 0)} accent="#64748b" onOpen={setOpenTarget} />
+                    <Synapse key={r.id} r={r} state={nodeState(r, startupDone ? total : 0)} accent="#a8a29e" onOpen={setOpenTarget} />
                   ))}
                 </motion.div>
               </section>
@@ -460,7 +460,7 @@ function NodeWithConnector({
     <div className="relative">
       {/* connector beam from spine to card */}
       <div className="absolute -left-[26px] top-1/2 h-[2px] w-[26px] -translate-y-1/2 sm:-left-[34px] sm:w-[34px]">
-        <div className="h-full w-full rounded-full bg-slate-800" />
+        <div className="h-full w-full rounded-full bg-stone-200" />
         <motion.div
           className="absolute inset-0 h-full rounded-full"
           initial={false}
@@ -469,7 +469,7 @@ function NodeWithConnector({
           style={{
             transformOrigin: "left",
             background: `linear-gradient(90deg, ${accent}, ${r.exists ? GREEN : RED})`,
-            boxShadow: state === "firing" ? `0 0 10px ${accent}` : "none",
+            boxShadow: state === "firing" ? `0 0 8px ${accent}` : "none",
           }}
         />
       </div>
@@ -480,8 +480,8 @@ function NodeWithConnector({
 
 function Legend({ color, label }: { color: string; label: string }) {
   return (
-    <div className="flex items-center gap-2 text-slate-400">
-      <span className="h-2 w-2 rounded-full" style={{ background: color, boxShadow: `0 0 6px ${color}` }} />
+    <div className="flex items-center gap-2 text-stone-600">
+      <span className="h-2 w-2 rounded-full" style={{ background: color, boxShadow: `0 0 5px ${color}66` }} />
       {label}
     </div>
   );

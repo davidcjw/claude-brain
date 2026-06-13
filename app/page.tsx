@@ -73,10 +73,10 @@ export default function Home() {
         >
           <BrainMark />
           <div>
-            <h1 className="font-display text-[28px] font-extrabold leading-none tracking-tight text-slate-50">
+            <h1 className="font-display text-[30px] font-bold leading-none tracking-tight text-foreground">
               Claude&apos;s Brain
             </h1>
-            <p className="mt-1.5 text-[13px] text-slate-500">
+            <p className="mt-1.5 text-[13px] text-stone-500">
               {tab === "cortex"
                 ? "Watch every config file fire into context — in the order it's read."
                 : "How that context is reused, decays, and goes cold — prompt caching, made tangible."}
@@ -86,7 +86,7 @@ export default function Home() {
       </header>
 
       {/* Tabs */}
-      <div className="mb-6 inline-flex rounded-xl border border-slate-800 bg-slate-950/50 p-1">
+      <div className="mb-6 inline-flex rounded-xl border border-line bg-paper p-1 shadow-paper">
         {([
           { key: "cortex", label: "Cortex", sub: "what loads" },
           { key: "cache", label: "Cache", sub: "what stays warm" },
@@ -94,19 +94,19 @@ export default function Home() {
           <button
             key={t.key}
             onClick={() => setTab(t.key)}
-            className={`relative rounded-lg px-4 py-1.5 text-[13px] font-medium transition-colors ${
-              tab === t.key ? "text-white" : "text-slate-400 hover:text-slate-200"
+            className={`relative cursor-pointer rounded-lg px-4 py-1.5 text-[13px] font-semibold transition-colors ${
+              tab === t.key ? "text-amber-900" : "text-stone-500 hover:text-stone-800"
             }`}
           >
             {tab === t.key && (
               <motion.span
                 layoutId="tab-pill"
-                className="absolute inset-0 rounded-lg bg-gradient-to-br from-violet-500/30 to-emerald-500/20 ring-1 ring-violet-400/40"
+                className="absolute inset-0 rounded-lg bg-amber-500/15 ring-1 ring-amber-500/40"
                 transition={{ type: "spring", stiffness: 380, damping: 30 }}
               />
             )}
-            <span className="relative">{t.label}</span>
-            <span className="relative ml-1.5 text-[10px] text-slate-500">{t.sub}</span>
+            <span className="relative font-display">{t.label}</span>
+            <span className="relative ml-1.5 text-[10px] font-medium text-stone-400">{t.sub}</span>
           </button>
         ))}
       </div>
@@ -116,10 +116,10 @@ export default function Home() {
       ) : (
       <>
       {/* Controls */}
-      <div className="mb-7 rounded-2xl border border-slate-800/70 bg-slate-950/40 p-4">
+      <div className="mb-7 rounded-2xl border border-line bg-paper p-4 shadow-paper">
         <div className="flex flex-wrap items-end gap-3">
           <div className="min-w-[240px] flex-1">
-            <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">
+            <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-[0.18em] text-stone-400">
               Project directory
             </label>
             <div className="flex gap-2">
@@ -130,19 +130,19 @@ export default function Home() {
                   if (e.key === "Enter") load(projectInput.trim() || null);
                 }}
                 placeholder="~/code/my-app  ·  blank = global only"
-                className="flex-1 rounded-lg border border-slate-700 bg-slate-900/80 px-3 py-2 font-mono text-[13px] text-slate-100 outline-none transition-colors focus:border-violet-500/60"
+                className="flex-1 rounded-lg border border-line bg-paper-sunk px-3 py-2 font-mono text-[13px] text-foreground outline-none transition-colors placeholder:text-stone-400 focus:border-amber-500/70"
               />
               <button
                 onClick={() => load(projectInput.trim() || null)}
                 disabled={loading}
-                className="rounded-lg bg-gradient-to-br from-violet-500 to-emerald-500 px-4 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-50"
+                className="cursor-pointer rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-amber-700 disabled:opacity-50"
               >
                 {loading ? "Scanning…" : "Scan"}
               </button>
             </div>
           </div>
-          <StatPill label="Present" value={present} total={total} color="#22c55e" />
-          <StatPill label="Missing" value={total - present} total={total} color="#f43f5e" />
+          <StatPill label="Present" value={present} total={total} color="#4d7c0f" />
+          <StatPill label="Missing" value={total - present} total={total} color="#c0392b" />
         </div>
 
         {projects.length > 0 && (
@@ -154,10 +154,10 @@ export default function Home() {
                   setProjectInput(p.path);
                   load(p.path);
                 }}
-                className={`rounded-md border px-2 py-0.5 font-mono text-[11px] transition-colors ${
+                className={`cursor-pointer rounded-md border px-2 py-0.5 font-mono text-[11px] transition-colors ${
                   activeProject === p.path
-                    ? "border-violet-500/60 bg-violet-500/15 text-violet-200"
-                    : "border-slate-800 bg-slate-900/60 text-slate-400 hover:border-slate-600 hover:text-slate-200"
+                    ? "border-amber-500/50 bg-amber-500/15 text-amber-900"
+                    : "border-line bg-paper-sunk text-stone-500 hover:border-line-strong hover:text-stone-800"
                 }`}
               >
                 {p.name}
@@ -168,8 +168,8 @@ export default function Home() {
       </div>
 
       {missingCore.length > 0 && (
-        <div className="mb-6 rounded-xl border border-rose-500/25 bg-rose-500/5 px-4 py-3 text-[13px] text-rose-200">
-          <span className="font-semibold">
+        <div className="mb-6 rounded-xl border border-[#eecabb] bg-[#fbece7] px-4 py-3 text-[13px] text-[#9a3412]">
+          <span className="font-bold">
             {missingCore.length} core file{missingCore.length === 1 ? "" : "s"} missing:
           </span>{" "}
           {missingCore.map((r) => r.label).join(", ")}
@@ -177,7 +177,7 @@ export default function Home() {
       )}
 
       {error && (
-        <div className="mb-6 rounded-xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-200">
+        <div className="mb-6 rounded-xl border border-[#eecabb] bg-[#fbece7] px-4 py-3 text-sm text-[#9a3412]">
           {error}
         </div>
       )}
@@ -195,7 +195,7 @@ export default function Home() {
       </>
       )}
 
-      <footer className="mt-12 text-center font-mono text-[11px] text-slate-700">
+      <footer className="mt-12 text-center font-mono text-[11px] text-stone-400">
         {tab === "cortex"
           ? `scanned ${data ? new Date(data.scannedAt).toLocaleTimeString() : "—"} · click any file to view & edit · localhost`
           : "interactive model · no API calls · all numbers reflect real cache pricing"}
@@ -216,11 +216,11 @@ function StatPill({
   color: string;
 }) {
   return (
-    <div className="rounded-lg border border-slate-800/70 bg-slate-900/40 px-3.5 py-1.5">
-      <p className="text-[9px] font-bold uppercase tracking-wider text-slate-500">{label}</p>
+    <div className="rounded-lg border border-line bg-paper-sunk px-3.5 py-1.5">
+      <p className="text-[9px] font-bold uppercase tracking-wider text-stone-400">{label}</p>
       <p className="font-display text-xl font-bold tabular-nums" style={{ color }}>
         {value}
-        <span className="ml-1 text-[11px] font-normal text-slate-600">/ {total}</span>
+        <span className="ml-1 text-[11px] font-normal text-stone-400">/ {total}</span>
       </p>
     </div>
   );
@@ -229,12 +229,11 @@ function StatPill({
 function BrainMark() {
   return (
     <motion.div
-      className="relative flex h-11 w-11 items-center justify-center rounded-xl border border-violet-500/30"
-      style={{ background: "radial-gradient(circle at 50% 30%, rgba(167,139,250,0.25), rgba(8,11,18,0.8))" }}
-      animate={{ boxShadow: ["0 0 0px rgba(167,139,250,0.0)", "0 0 22px rgba(167,139,250,0.45)", "0 0 0px rgba(167,139,250,0.0)"] }}
+      className="relative flex h-11 w-11 items-center justify-center rounded-xl border border-amber-500/30 bg-amber-500/10"
+      animate={{ boxShadow: ["0 0 0px rgba(217,119,6,0.0)", "0 0 20px rgba(217,119,6,0.35)", "0 0 0px rgba(217,119,6,0.0)"] }}
       transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
     >
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#c4b5fd" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#b45309" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
         <path d="M12 5a3 3 0 0 0-3 3 2.5 2.5 0 0 0-2 4 2.5 2.5 0 0 0 1 4.5A2.5 2.5 0 0 0 12 19V5Z" />
         <path d="M12 5a3 3 0 0 1 3 3 2.5 2.5 0 0 1 2 4 2.5 2.5 0 0 1-1 4.5A2.5 2.5 0 0 1 12 19" />
         <path d="M9 9.5h1M14 9.5h1M9.5 13h1M13.5 13h1" />

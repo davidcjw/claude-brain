@@ -44,19 +44,19 @@ export const MECHANISMS: Record<
   prompt: {
     label: "in context",
     verb: "Reading into context",
-    accent: "#38bdf8",
+    accent: "#0d9488",
     blurb: "Injected into the prompt as text",
   },
   harness: {
     label: "harness",
     verb: "Configuring harness",
-    accent: "#fbbf24",
+    accent: "#92400e",
     blurb: "Configures the harness — permissions, hooks, env, MCP (not prompt text)",
   },
   invoke: {
     label: "on invoke",
     verb: "Registering",
-    accent: "#94a3b8",
+    accent: "#78716c",
     blurb: "Discovered now; content loads only when used",
   },
 };
@@ -69,7 +69,7 @@ function mechanismFor(e: { tier: string; loadType: LoadType }): Mechanism {
   return HARNESS_TIERS.has(e.tier) ? "harness" : "prompt";
 }
 
-// Strata in load order, top → bottom. Accents flow violet → teal → slate,
+// Strata in load order, top → bottom. Accents flow amber → green,
 // tracing global → project → on-demand as context streams in.
 export const TIERS: {
   name: string;
@@ -78,12 +78,12 @@ export const TIERS: {
   accent: string;
   blurb: string;
 }[] = [
-  { name: "Global Instructions", scope: "global", loadType: "startup", accent: "#a78bfa", blurb: "Your standing orders, every session" },
-  { name: "Global Memory", scope: "global", loadType: "startup", accent: "#818cf8", blurb: "Persisted facts recalled into context" },
-  { name: "Global Config", scope: "global", loadType: "startup", accent: "#60a5fa", blurb: "Harness behaviour & MCP registry" },
-  { name: "Project Instructions", scope: "project", loadType: "startup", accent: "#22d3ee", blurb: "This repo's rules & guidance" },
-  { name: "Project Config", scope: "project", loadType: "startup", accent: "#2dd4bf", blurb: "Repo-scoped settings & MCP" },
-  { name: "On-Demand", scope: "mixed", loadType: "on-demand", accent: "#64748b", blurb: "Loaded only when invoked" },
+  { name: "Global Instructions", scope: "global", loadType: "startup", accent: "#b45309", blurb: "Your standing orders, every session" },
+  { name: "Global Memory", scope: "global", loadType: "startup", accent: "#c2410c", blurb: "Persisted facts recalled into context" },
+  { name: "Global Config", scope: "global", loadType: "startup", accent: "#92400e", blurb: "Harness behaviour & MCP registry" },
+  { name: "Project Instructions", scope: "project", loadType: "startup", accent: "#4d7c0f", blurb: "This repo's rules & guidance" },
+  { name: "Project Config", scope: "project", loadType: "startup", accent: "#3f6212", blurb: "Repo-scoped settings & MCP" },
+  { name: "On-Demand", scope: "mixed", loadType: "on-demand", accent: "#78716c", blurb: "Loaded only when invoked" },
 ];
 
 function join(...parts: string[]): string {

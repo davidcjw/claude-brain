@@ -105,10 +105,12 @@ const TIER_META: { key: Tier; label: string }[] = [
   { key: "messages", label: "messages" },
 ];
 
-const GREEN = "#22c55e";
-const RED = "#f43f5e";
-const AMBER = "#fbbf24";
-const SLATE = "#94a3b8";
+const GREEN = "#4d7c0f"; // sage — warm / hit
+const RED = "#c0392b"; // terracotta — cold / miss
+const AMBER = "#b45309"; // burnt amber — partial
+const SLATE = "#a8a29e"; // warm stone — neutral/info
+const INK = "#1c1917";
+const LINE = "#ece3d3";
 
 function fmtTok(n: number): string {
   if (n >= 1000) return `${(n / 1000).toFixed(n % 1000 === 0 ? 0 : 1)}k`;
@@ -358,12 +360,12 @@ export default function CacheLab() {
   return (
     <div className="space-y-5">
       {/* ── How this works ── */}
-      <section className="rounded-2xl border border-violet-500/25 bg-violet-500/[0.04] p-5">
-        <button onClick={() => setShowHelp((s) => !s)} className="flex w-full items-center justify-between text-left">
-          <h3 className="font-display text-sm font-bold text-slate-100">
-            What is this? <span className="text-violet-300">Prompt caching in 20 seconds</span>
+      <section className="rounded-2xl border border-amber-500/30 bg-amber-500/[0.06] p-5">
+        <button onClick={() => setShowHelp((s) => !s)} className="flex w-full cursor-pointer items-center justify-between text-left">
+          <h3 className="font-display text-sm font-bold text-foreground">
+            What is this? <span className="text-amber-700">Prompt caching in 20 seconds</span>
           </h3>
-          <span className="font-mono text-[11px] text-slate-500">{showHelp ? "hide ▴" : "show ▾"}</span>
+          <span className="font-mono text-[11px] text-stone-400">{showHelp ? "hide ▴" : "show ▾"}</span>
         </button>
         <AnimatePresence initial={false}>
           {showHelp && (
@@ -374,14 +376,14 @@ export default function CacheLab() {
               transition={{ duration: 0.25, ease: "easeOut" }}
               className="overflow-hidden"
             >
-              <p className="mt-3 text-[13px] leading-relaxed text-slate-400">
-                Every turn re-sends the <span className="text-slate-200">whole conversation</span>{" "}
+              <p className="mt-3 text-[13px] leading-relaxed text-stone-600">
+                Every turn re-sends the <span className="font-semibold text-foreground">whole conversation</span>{" "}
                 (tools → system → messages) before your new message. Caching stores that unchanged{" "}
-                <span className="text-slate-200">prefix</span> and reads it back at{" "}
-                <span className="text-emerald-300">~1/10th the price</span> — but it{" "}
-                <span className="text-amber-300">expires</span> (5 min) and{" "}
-                <span className="text-rose-300">breaks</span> if the prefix changes. Pick a scenario and press{" "}
-                <span className="text-violet-200">▶ Play</span> — watch the bar, the TTL clock, and the event log react live.
+                <span className="font-semibold text-foreground">prefix</span> and reads it back at{" "}
+                <span className="font-semibold text-[#3f6212]">~1/10th the price</span> — but it{" "}
+                <span className="font-semibold text-amber-700">expires</span> (5 min) and{" "}
+                <span className="font-semibold text-[#c0392b]">breaks</span> if the prefix changes. Pick a scenario and press{" "}
+                <span className="font-semibold text-amber-800">▶ Play</span> — watch the bar, the TTL clock, and the event log react live.
               </p>
             </motion.div>
           )}
@@ -389,10 +391,10 @@ export default function CacheLab() {
       </section>
 
       {/* ── Scenario picker + transport ── */}
-      <section className="rounded-2xl border border-slate-800/70 bg-slate-950/40 p-5">
+      <section className="rounded-2xl border border-line bg-paper p-5 shadow-paper">
         <div className="mb-3 flex items-center justify-between">
-          <h3 className="font-display text-sm font-bold text-slate-100">Pick a scenario</h3>
-          <span className="font-mono text-[11px] text-slate-500">
+          <h3 className="font-display text-sm font-bold text-foreground">Pick a scenario</h3>
+          <span className="font-mono text-[11px] text-stone-400">
             {playing ? `playing · step ${Math.min(stepIdx + 1, scenario.steps.length)}/${scenario.steps.length}` : finished && events.length ? "done" : "ready"}
           </span>
         </div>
@@ -405,15 +407,15 @@ export default function CacheLab() {
                 key={s.id}
                 disabled={playing}
                 onClick={() => prime(s.id)}
-                className={`rounded-xl border p-3 text-left transition-colors disabled:opacity-50 ${
-                  active ? "border-violet-500/60 bg-violet-500/10" : "border-slate-800 bg-slate-950/40 hover:border-slate-700"
+                className={`cursor-pointer rounded-xl border p-3 text-left transition-colors disabled:cursor-default disabled:opacity-50 ${
+                  active ? "border-amber-500/60 bg-amber-500/10" : "border-line bg-paper-sunk hover:border-line-strong"
                 }`}
               >
                 <div className="flex items-center gap-1.5">
                   <span className="text-sm">{s.icon}</span>
-                  <span className={`font-display text-[13px] font-bold ${active ? "text-violet-200" : "text-slate-200"}`}>{s.title}</span>
+                  <span className={`font-display text-[13px] font-bold ${active ? "text-amber-800" : "text-stone-800"}`}>{s.title}</span>
                 </div>
-                <p className="mt-1 text-[11px] leading-snug text-slate-500">{s.blurb}</p>
+                <p className="mt-1 text-[11px] leading-snug text-stone-500">{s.blurb}</p>
               </button>
             );
           })}
@@ -423,7 +425,7 @@ export default function CacheLab() {
           <button
             onClick={play}
             disabled={playing}
-            className="flex items-center gap-2 rounded-lg bg-gradient-to-br from-violet-500 to-emerald-500 px-5 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-60"
+            className="flex cursor-pointer items-center gap-2 rounded-lg bg-accent px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-amber-700 disabled:opacity-60"
           >
             {playing ? (
               <>
@@ -439,7 +441,7 @@ export default function CacheLab() {
           <button
             onClick={() => prime(scenarioId)}
             disabled={playing}
-            className="rounded-lg border border-slate-700 px-3 py-2 text-[13px] font-medium text-slate-300 transition-colors hover:bg-slate-800 disabled:opacity-50"
+            className="cursor-pointer rounded-lg border border-line px-3 py-2 text-[13px] font-medium text-stone-700 transition-colors hover:bg-paper-sunk disabled:opacity-50"
           >
             ↺ Reset
           </button>
@@ -447,44 +449,44 @@ export default function CacheLab() {
       </section>
 
       {/* ── The prefix ── */}
-      <section className="rounded-2xl border border-slate-800/70 bg-slate-950/40 p-5">
+      <section className="rounded-2xl border border-line bg-paper p-5 shadow-paper">
         <div className="mb-3 flex items-center justify-between">
-          <h3 className="font-display text-sm font-bold text-slate-100">The cached prefix</h3>
-          <span className="font-mono text-[11px] text-slate-500">render order: tools → system → messages</span>
+          <h3 className="font-display text-sm font-bold text-foreground">The cached prefix</h3>
+          <span className="font-mono text-[11px] text-stone-400">render order: tools → system → messages</span>
         </div>
 
-        <div className="relative flex h-16 w-full overflow-hidden rounded-xl border border-slate-800">
+        <div className="relative flex h-16 w-full overflow-hidden rounded-xl border border-line">
           {TIER_META.map(({ key, label }) => {
             const w = warm[key];
             return (
               <div
                 key={key + toolsRev}
-                className="relative flex flex-col items-center justify-center border-r border-slate-950/60 last:border-r-0"
+                className="relative flex flex-col items-center justify-center border-r border-line last:border-r-0"
                 style={{
                   flexGrow: sizes[key],
                   flexBasis: 0,
-                  background: w ? `linear-gradient(180deg, ${GREEN}22, ${GREEN}0d)` : "rgba(244,63,94,0.06)",
+                  background: w ? `linear-gradient(180deg, ${GREEN}26, ${GREEN}10)` : "rgba(192,57,43,0.07)",
                 }}
                 title={`${label}: ${fmtTok(sizes[key])} tokens — ${w ? "warm (cache read 0.1×)" : "cold (reprocess + write)"}`}
               >
                 {w && (
                   <motion.span
                     className="pointer-events-none absolute inset-0"
-                    animate={{ opacity: [0.25, 0.55, 0.25] }}
+                    animate={{ opacity: [0.2, 0.45, 0.2] }}
                     transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
-                    style={{ background: `linear-gradient(180deg, ${GREEN}14, transparent)` }}
+                    style={{ background: `linear-gradient(180deg, ${GREEN}1c, transparent)` }}
                   />
                 )}
-                <span className="relative z-10 font-mono text-[12px] font-semibold" style={{ color: w ? "#dcfce7" : "#fda4af" }}>
+                <span className="relative z-10 font-mono text-[12px] font-semibold" style={{ color: w ? "#3f6212" : "#a13a2c" }}>
                   {label}
                 </span>
-                <span className="relative z-10 font-mono text-[10px] text-slate-500">{fmtTok(sizes[key])}</span>
+                <span className="relative z-10 font-mono text-[10px] text-stone-400">{fmtTok(sizes[key])}</span>
                 <AnimatePresence>
                   {flash && flash.tiers.includes(key) && (
                     <motion.span
                       key={flash.id}
                       className="pointer-events-none absolute inset-0"
-                      initial={{ opacity: 0.75 }}
+                      initial={{ opacity: 0.6 }}
                       animate={{ opacity: 0 }}
                       exit={{ opacity: 0 }}
                       transition={{ duration: 0.7, ease: "easeOut" }}
@@ -497,33 +499,33 @@ export default function CacheLab() {
             );
           })}
           <div className="absolute right-0 top-0 flex h-full items-center">
-            <div className="h-full w-[3px]" style={{ background: anyWarm ? GREEN : "#475569" }} />
+            <div className="h-full w-[3px]" style={{ background: anyWarm ? GREEN : "#d6cfc2" }} />
           </div>
         </div>
-        <div className="mt-1.5 flex justify-between font-mono text-[10px] text-slate-600">
+        <div className="mt-1.5 flex justify-between font-mono text-[10px] text-stone-400">
           <span>position 0</span>
           <span>{fmtTok(prefix)} tokens · cache_control breakpoint ▸</span>
         </div>
 
         <div className="mt-3 flex items-center gap-2 text-[11px]">
-          <span className={`rounded px-2 py-0.5 font-bold uppercase tracking-wider ${anyWarm && !expired ? "bg-emerald-500/15 text-emerald-300" : "bg-rose-500/15 text-rose-300"}`}>
+          <span className={`rounded px-2 py-0.5 font-bold uppercase tracking-wider ${anyWarm && !expired ? "bg-[#eaf3da] text-[#3f6212]" : "bg-[#fbe3da] text-[#9a3412]"}`}>
             {anyWarm && !expired ? "warm" : "cold"}
           </span>
-          <span className="font-mono text-slate-500">model {model}</span>
-          <span className="font-mono text-slate-600">· tools rev {toolsRev}</span>
+          <span className="font-mono text-stone-500">model {model}</span>
+          <span className="font-mono text-stone-400">· tools rev {toolsRev}</span>
         </div>
       </section>
 
       <div className="grid gap-5 lg:grid-cols-[1fr_300px]">
         {/* ── Event log (the star) ── */}
-        <section className="rounded-2xl border border-slate-800/70 bg-slate-950/40 p-5">
-          <h3 className="mb-3 font-display text-sm font-bold text-slate-100">What&apos;s happening</h3>
+        <section className="rounded-2xl border border-line bg-paper p-5 shadow-paper">
+          <h3 className="mb-3 font-display text-sm font-bold text-foreground">What&apos;s happening</h3>
           <Timeline segs={segs} stepIdx={stepIdx} playing={playing} started={events.length > 0 || playing} totalSec={totalSec} />
           {events.length === 0 ? (
             <div className="flex h-44 flex-col items-center justify-center gap-1 text-center">
-              <span className="text-2xl opacity-60">{scenario.icon}</span>
-              <p className="text-[13px] text-slate-400">{scenario.title}</p>
-              <p className="max-w-xs text-[11px] text-slate-600">Press ▶ Play and the steps will narrate here as they happen.</p>
+              <span className="text-2xl opacity-70">{scenario.icon}</span>
+              <p className="text-[13px] text-stone-500">{scenario.title}</p>
+              <p className="max-w-xs text-[11px] text-stone-400">Press ▶ Play and the steps will narrate here as they happen.</p>
             </div>
           ) : (
             <div className="space-y-2">
@@ -536,18 +538,18 @@ export default function CacheLab() {
                       key={e.id}
                       layout
                       initial={{ opacity: 0, y: 8 }}
-                      animate={{ opacity: isLast ? 1 : 0.65, y: 0 }}
+                      animate={{ opacity: isLast ? 1 : 0.7, y: 0 }}
                       transition={{ duration: 0.3 }}
-                      className="flex gap-3 rounded-xl border bg-slate-900/40 px-3.5 py-2.5"
-                      style={{ borderColor: isLast ? `${c}66` : "rgba(30,41,59,0.7)" }}
+                      className="flex gap-3 rounded-xl border bg-paper-sunk px-3.5 py-2.5"
+                      style={{ borderColor: isLast ? `${c}66` : LINE }}
                     >
-                      <span className="mt-0.5 inline-block h-2 w-2 flex-shrink-0 rounded-full" style={{ background: c, boxShadow: isLast ? `0 0 8px ${c}` : "none" }} />
+                      <span className="mt-0.5 inline-block h-2 w-2 flex-shrink-0 rounded-full" style={{ background: c, boxShadow: isLast ? `0 0 7px ${c}99` : "none" }} />
                       <div className="min-w-0">
                         <p className="font-display text-[13px] font-bold" style={{ color: c }}>
                           {e.head}
                         </p>
-                        <p className="mt-0.5 text-[12px] leading-snug text-slate-400">{e.note}</p>
-                        <p className="mt-1 font-mono text-[11px] text-slate-500">{e.metric}</p>
+                        <p className="mt-0.5 text-[12px] leading-snug text-stone-600">{e.note}</p>
+                        <p className="mt-1 font-mono text-[11px] text-stone-500">{e.metric}</p>
                       </div>
                     </motion.div>
                   );
@@ -559,26 +561,26 @@ export default function CacheLab() {
 
         {/* ── TTL + totals ── */}
         <section className="flex flex-col gap-4">
-          <div className="rounded-2xl border border-slate-800/70 bg-slate-950/40 p-5">
+          <div className="rounded-2xl border border-line bg-paper p-5 shadow-paper">
             <div className="flex items-center justify-between">
-              <h3 className="flex items-center gap-2 font-display text-sm font-bold text-slate-100">
+              <h3 className="flex items-center gap-2 font-display text-sm font-bold text-foreground">
                 TTL clock
                 {playing && (
-                  <span className="flex items-center gap-1 text-[10px] font-medium text-emerald-300">
-                    <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
+                  <span className="flex items-center gap-1 text-[10px] font-semibold text-[#3f6212]">
+                    <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full" style={{ background: GREEN }} />
                     live
                   </span>
                 )}
               </h3>
-              <span className="font-mono text-[11px] text-slate-500">5m TTL</span>
+              <span className="font-mono text-[11px] text-stone-400">5m TTL</span>
             </div>
             <div className="mt-3 flex items-baseline gap-2">
-              <span className="font-display text-3xl font-extrabold tabular-nums" style={{ color: ttlColor }}>
+              <span className="font-display text-3xl font-bold tabular-nums" style={{ color: ttlColor }}>
                 {cache && !expired ? mmss(remaining) : "—"}
               </span>
-              <span className="text-[11px] text-slate-600">{cache && !expired ? "until cold" : "no warm cache"}</span>
+              <span className="text-[11px] text-stone-400">{cache && !expired ? "until cold" : "no warm cache"}</span>
             </div>
-            <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-slate-800">
+            <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-stone-200">
               <motion.div
                 className="h-full rounded-full"
                 animate={{ width: `${cache && !expired ? (remaining / cache.ttl) * 100 : 0}%` }}
@@ -586,28 +588,28 @@ export default function CacheLab() {
                 style={{ background: ttlColor }}
               />
             </div>
-            <p className="mt-2 font-mono text-[10px] text-slate-600">session clock +{mmss(clock)} · write {writeMult}×</p>
+            <p className="mt-2 font-mono text-[10px] text-stone-400">session clock +{mmss(clock)} · write {writeMult}×</p>
           </div>
 
-          <div className="rounded-2xl border border-slate-800/70 bg-slate-950/40 p-5">
-            <h3 className="mb-2 font-display text-sm font-bold text-slate-100">Ledger</h3>
+          <div className="rounded-2xl border border-line bg-paper p-5 shadow-paper">
+            <h3 className="mb-2 font-display text-sm font-bold text-foreground">Ledger</h3>
             <div className="flex justify-between font-mono text-[12px]">
-              <span className="text-slate-500">spent</span>
-              <span className="text-slate-200">{fmtMoney(spent)}</span>
+              <span className="text-stone-500">spent</span>
+              <span className="text-stone-800">{fmtMoney(spent)}</span>
             </div>
             <div className="flex justify-between font-mono text-[12px]">
-              <span className="text-slate-500">saved vs no-cache</span>
+              <span className="text-stone-500">saved vs no-cache</span>
               <span style={{ color: saved >= 0 ? GREEN : RED }}>{fmtMoney(saved)}</span>
             </div>
             <div className="flex justify-between font-mono text-[12px]">
-              <span className="text-slate-500">turns</span>
-              <span className="text-slate-400">{turnNo}</span>
+              <span className="text-stone-500">turns</span>
+              <span className="text-stone-600">{turnNo}</span>
             </div>
           </div>
         </section>
       </div>
 
-      <p className="text-center font-mono text-[10px] leading-relaxed text-slate-600">
+      <p className="text-center font-mono text-[10px] leading-relaxed text-stone-400">
         faithful model · {model === "claude-opus-4-8" ? "Opus 4.8 $5/1M input" : "Sonnet 4.6 $3/1M input"} · read 0.1× · write 1.25× (5m TTL) ·
         editing system keeps tools warm; changing tools or model goes fully cold
       </p>
@@ -642,7 +644,7 @@ function Timeline({
 
   return (
     <div className="mb-4">
-      <div className="mb-1.5 flex items-center justify-between font-mono text-[10px] text-slate-600">
+      <div className="mb-1.5 flex items-center justify-between font-mono text-[10px] text-stone-400">
         <span>timeline — time flows left → right</span>
         <span>{mmss(totalSec)} of conversation</span>
       </div>
@@ -650,36 +652,36 @@ function Timeline({
         {playing && (
           <motion.div
             className="pointer-events-none absolute -top-1 bottom-2 z-20 w-[2px]"
-            style={{ background: "#fff", boxShadow: "0 0 10px 1px rgba(255,255,255,0.8)" }}
+            style={{ background: INK, boxShadow: "0 0 8px 1px rgba(217,119,6,0.5)" }}
             animate={{ left: `${playPct}%` }}
             transition={{ ease: "linear", duration: sweepDur }}
           >
-            <span className="absolute -top-1 left-1/2 h-2 w-2 -translate-x-1/2 rounded-full bg-white shadow-[0_0_8px_2px_rgba(255,255,255,0.7)]" />
+            <span className="absolute -top-1 left-1/2 h-2 w-2 -translate-x-1/2 rounded-full" style={{ background: "#d97706", boxShadow: "0 0 7px 2px rgba(217,119,6,0.6)" }} />
           </motion.div>
         )}
         {segs.map((seg) => {
           const done = started && seg.i < stepIdx;
           const current = playing && seg.i === stepIdx;
-          const op = current ? 1 : done ? 0.95 : started ? 0.4 : 0.6;
+          const op = current ? 1 : done ? 0.95 : started ? 0.45 : 0.65;
           const c = toneColor(seg.tone);
           return (
             <div key={seg.i} className="relative flex min-w-0 flex-col transition-opacity" style={{ flexGrow: seg.weight, flexBasis: 0, opacity: op }}>
-              <span className="truncate px-0.5 font-mono text-[9px]" style={{ color: seg.kind === "send" ? c : "#94a3b8" }}>
+              <span className="truncate px-0.5 font-mono text-[9px]" style={{ color: seg.kind === "send" ? c : "#a8a29e" }}>
                 {seg.label}
               </span>
               <div
                 className="relative mt-0.5 flex-1 overflow-hidden rounded border"
-                style={{ borderColor: current ? `${c}aa` : "rgba(30,41,59,0.8)", boxShadow: current ? `0 0 9px ${c}66` : "none" }}
+                style={{ borderColor: current ? `${c}aa` : LINE, boxShadow: current ? `0 0 9px ${c}55` : "none" }}
               >
                 {seg.kind === "wait" ? (
                   <div className="flex h-full w-full">
-                    <div style={{ flexGrow: Math.max(seg.warmFrac, 0.001), background: `${GREEN}55` }} />
-                    <div style={{ flexGrow: Math.max(1 - seg.warmFrac, 0.001), background: seg.warmFrac > 0 ? `${RED}55` : "rgba(100,116,139,0.25)" }} />
+                    <div style={{ flexGrow: Math.max(seg.warmFrac, 0.001), background: `${GREEN}59` }} />
+                    <div style={{ flexGrow: Math.max(1 - seg.warmFrac, 0.001), background: seg.warmFrac > 0 ? `${RED}59` : "rgba(168,162,158,0.3)" }} />
                   </div>
                 ) : seg.kind === "send" ? (
-                  <div className="h-full w-full" style={{ background: `${c}33` }} />
+                  <div className="h-full w-full" style={{ background: `${c}3d` }} />
                 ) : (
-                  <div className="flex h-full w-full items-center justify-center" style={{ background: `${RED}40` }}>
+                  <div className="flex h-full w-full items-center justify-center" style={{ background: `${RED}40`, color: "#9a3412" }}>
                     <span className="text-[10px]">✕</span>
                   </div>
                 )}
@@ -688,9 +690,9 @@ function Timeline({
           );
         })}
       </div>
-      <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-slate-800">
+      <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-stone-200">
         <motion.div
-          className="h-full rounded-full bg-gradient-to-r from-violet-400 to-emerald-400"
+          className="h-full rounded-full bg-gradient-to-r from-amber-500 to-lime-600"
           animate={{ width: `${playPct}%` }}
           transition={{ ease: "linear", duration: playing ? sweepDur : 0.4 }}
         />

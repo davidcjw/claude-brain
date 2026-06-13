@@ -10,7 +10,7 @@ Claude Code loads context from a sprawl of files across `~/.claude/`, `~/.claude
 
 The app has two tabs:
 - **Cortex** — the file map below.
-- **Cache** — an interactive, faithful model of Anthropic **prompt caching**: a tools→system→messages prefix bar that stays warm (green) and decays to cold (red), a TTL clock (5-min default / 1-hour max), and a cost ledger (read 0.1× · write 1.25×/2× · miss). Drive it with *Send a turn*, *Wait*, *Edit system / Change tools / Switch model* (watch prefix-tier invalidation), and a **"Walk away 3h"** preset that demonstrates the cold-prefill hit (~$1 vs ~$0.10 on a 200k prefix). The cost math lives in `lib/cache-model.ts` (unit-tested).
+- **Cache** — an interactive, faithful model of Anthropic **prompt caching**, taught through one-click **scenarios**. Pick *Rapid back-and-forth*, *Coffee break*, *Edit your system prompt*, or *Switch models* and press **▶ Play**: a tools→system→messages prefix bar (warm = sage, cold = terracotta), a TTL clock (5-min), a **timeline** with a moving playhead (wait segments show the green→red split right at the TTL boundary), and a narrated **event log** all react live while a cost ledger tallies spend vs. no-cache. The cost math lives in `lib/cache-model.ts` (unit-tested).
 
 ## The visualization
 
@@ -20,7 +20,7 @@ The app has two tabs:
 - **Click to view, edit & create** — click any node to open its contents in a modal and **save real edits to disk**. Missing files can be *created* (e.g. a `CLAUDE.local.md`); open a directory and use **"+ New file in this folder"** to create a brand-new rule / command / subagent / memory file. Editing a symlink (like global `CLAUDE.md`) warns that it writes through to the real target. Writes are confined to Claude's own config by an allowlist — it physically cannot touch anything outside `~/.claude` or the active project's tracked paths.
 - **Detail per node** — symlink targets, sizes, mtimes, directory item counts, `core` tags.
 - **Replay** any time; respects `prefers-reduced-motion` (renders the full map instantly).
-- Built with **framer-motion** (`motion`), Tailwind v4, and a distinctive Bricolage Grotesque display face.
+- Built with **framer-motion** (`motion`) and Tailwind v4, in a warm "paper" aesthetic — cream surface, amber accent, **Fredoka** display / **Nunito Sans** body / **JetBrains Mono** for data.
 
 > Read order is approximate — it reflects Claude Code's documented load hierarchy, not byte-exact timing.
 

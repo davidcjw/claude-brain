@@ -1,29 +1,38 @@
 @import "tailwindcss";
 
 :root {
-  --background: #04060c;
-  --foreground: #e8edf6;
-  --font-display: var(--font-display), "Bricolage Grotesque", system-ui, sans-serif;
+  /* Warm Paper palette */
+  --background: #faf7f0; /* cream */
+  --foreground: #1c1917; /* warm stone ink */
+  --paper: #ffffff;
+  --paper-sunk: #f7f1e6; /* warm muted surface */
+  --line: #ece3d3; /* warm hairline */
+  --line-strong: #e0d5c0;
+  --accent: #d97706; /* amber */
+  --font-display: var(--font-display), "Fredoka", system-ui, sans-serif;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-paper: var(--paper);
+  --color-paper-sunk: var(--paper-sunk);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-accent: var(--accent);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
   --font-display: var(--font-display);
 }
 
 body {
   background:
-    radial-gradient(1100px 600px at 12% -8%, rgba(167, 139, 250, 0.10), transparent 60%),
-    radial-gradient(1000px 700px at 100% 8%, rgba(45, 212, 191, 0.10), transparent 58%),
-    radial-gradient(900px 900px at 50% 120%, rgba(34, 197, 94, 0.06), transparent 60%),
+    radial-gradient(1100px 620px at 14% -10%, rgba(217, 119, 6, 0.07), transparent 60%),
+    radial-gradient(900px 680px at 100% 4%, rgba(77, 124, 15, 0.06), transparent 58%),
     var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), system-ui, sans-serif;
   min-height: 100vh;
-  /* Subtle synaptic grain */
   background-attachment: fixed;
 }
 
@@ -31,11 +40,27 @@ body {
   font-family: var(--font-display);
 }
 
-/* Faint dot-grid texture behind the cortex */
+/* Reusable warm-paper card shadow — soft, low, ink-tinted */
+.shadow-paper {
+  box-shadow:
+    0 1px 2px rgba(28, 25, 23, 0.04),
+    0 12px 30px -20px rgba(28, 25, 23, 0.22);
+}
+.shadow-paper-lg {
+  box-shadow:
+    0 1px 2px rgba(28, 25, 23, 0.05),
+    0 30px 60px -28px rgba(28, 25, 23, 0.30);
+}
+
+/* Faint warm dot-grid texture behind the cortex */
 .synapse-grid {
-  background-image: radial-gradient(rgba(148, 163, 184, 0.10) 1px, transparent 1px);
+  background-image: radial-gradient(rgba(120, 113, 108, 0.16) 1px, transparent 1px);
   background-size: 22px 22px;
   mask-image: radial-gradient(ellipse 70% 80% at 50% 40%, #000 30%, transparent 80%);
+}
+
+::selection {
+  background: rgba(217, 119, 6, 0.22);
 }
 
 @keyframes drift {
