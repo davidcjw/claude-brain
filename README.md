@@ -2,6 +2,8 @@
 
 **The Cortex** — watch every file Claude Code reads *fire into context in the order it's loaded*, then click any one to view and edit it. A local-only Next.js dashboard that scans your filesystem and animates the full config hierarchy as a neural cascade: present files flash green and hold a synaptic glow, missing files flash red and stay dark (a dead synapse).
 
+![Claude's Brain — the Cortex read-order sweep, then the Cache scenario player](docs/demo.gif)
+
 ![scope: global + current project](https://img.shields.io/badge/scope-global%20%2B%20project-22c55e)
 
 ## Why
