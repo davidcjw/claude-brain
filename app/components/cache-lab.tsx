@@ -109,8 +109,8 @@ const GREEN = "#4d7c0f"; // sage — warm / hit
 const RED = "#c0392b"; // terracotta — cold / miss
 const AMBER = "#b45309"; // burnt amber — partial
 const SLATE = "#a8a29e"; // warm stone — neutral/info
-const INK = "#1c1917";
-const LINE = "#ece3d3";
+const INK = "var(--foreground)";
+const LINE = "var(--line)";
 
 function fmtTok(n: number): string {
   if (n >= 1000) return `${(n / 1000).toFixed(n % 1000 === 0 ? 0 : 1)}k`;

@@ -130,7 +130,7 @@ function Synapse({
         <div className="flex flex-wrap items-center gap-1.5">
           <span
             className="truncate font-mono text-[13px] font-medium"
-            style={{ color: state === "pending" ? "#a8a29e" : present ? "#1c1917" : "#a13a2c" }}
+            style={{ color: state === "pending" ? "#a8a29e" : present ? "var(--foreground)" : "#a13a2c" }}
           >
             {r.label}
           </span>
