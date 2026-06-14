@@ -36,6 +36,58 @@ body {
   background-attachment: fixed;
 }
 
+/* ── Dark theme ───────────────────────────────────────────────
+   Flip the warm-paper surface vars AND remap Tailwind's stone /
+   amber color tokens (they're CSS vars in v4), so every hardcoded
+   `stone-*` / `text-amber-*` utility in the components recolors
+   automatically — no per-component edits. */
+.dark {
+  color-scheme: dark;
+
+  /* Warm-paper → warm-dark surfaces */
+  --background: #16130f;
+  --foreground: #f0ebe2;
+  --paper: #211d17;
+  --paper-sunk: #1a1611;
+  --line: #332d24;
+  --line-strong: #423a2e;
+  --accent: #f59e0b;
+
+  /* Invert the stone scale so the text hierarchy survives:
+     strong text (800/900) becomes lightest, muted (400) stays dim. */
+  --color-stone-50: #1c1813;
+  --color-stone-100: #2a251e;
+  --color-stone-200: #3a342a;
+  --color-stone-300: #6b655c;
+  --color-stone-400: #8a847b;
+  --color-stone-500: #a8a299;
+  --color-stone-600: #c4beb4;
+  --color-stone-700: #d8d2c8;
+  --color-stone-800: #ece6dc;
+  --color-stone-900: #f5f0e8;
+  --color-stone-950: #fbf7f1;
+}
+
+.dark body {
+  background:
+    radial-gradient(1100px 620px at 14% -10%, rgba(245, 158, 11, 0.10), transparent 60%),
+    radial-gradient(900px 680px at 100% 4%, rgba(132, 204, 22, 0.07), transparent 58%),
+    var(--background);
+}
+
+/* Amber text shades read too dark on a dark surface — lift them. */
+.dark .text-amber-900 { color: #fcd9a8; }
+.dark .text-amber-800 { color: #f3c277; }
+
+/* Alert boxes use arbitrary hex; recolor the light pairs for dark. */
+.dark .bg-\[\#fbece7\],
+.dark .bg-\[\#fbe3da\] { background-color: #3a1f17; }
+.dark .border-\[\#eecabb\] { border-color: #5c3526; }
+.dark .text-\[\#9a3412\] { color: #f0a787; }
+.dark .bg-\[\#eaf3da\] { background-color: #1e2a14; }
+.dark .text-\[\#3f6212\] { color: #b7d98a; }
+.dark .text-\[\#c0392b\] { color: #e8927f; }
+
 .font-display {
   font-family: var(--font-display);
 }
@@ -58,9 +110,27 @@ body {
   background-size: 22px 22px;
   mask-image: radial-gradient(ellipse 70% 80% at 50% 40%, #000 30%, transparent 80%);
 }
+.dark .synapse-grid {
+  background-image: radial-gradient(rgba(245, 158, 11, 0.14) 1px, transparent 1px);
+}
+
+/* Deepen card shadows on dark so cards still read as raised. */
+.dark .shadow-paper {
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.4),
+    0 12px 30px -20px rgba(0, 0, 0, 0.7);
+}
+.dark .shadow-paper-lg {
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.5),
+    0 30px 60px -28px rgba(0, 0, 0, 0.8);
+}
 
 ::selection {
   background: rgba(217, 119, 6, 0.22);
+}
+.dark ::selection {
+  background: rgba(245, 158, 11, 0.30);
 }
 
 @keyframes drift {

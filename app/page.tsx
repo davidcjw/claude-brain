@@ -26,6 +26,23 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [scanKey, setScanKey] = useState(0);
   const [tab, setTab] = useState<Tab>("cortex");
+  const [dark, setDark] = useState(false);
+
+  // Sync toggle state with the class the pre-paint script already set.
+  useEffect(() => {
+    setDark(document.documentElement.classList.contains("dark"));
+  }, []);
+
+  const toggleTheme = useCallback(() => {
+    setDark((d) => {
+      const next = !d;
+      document.documentElement.classList.toggle("dark", next);
+      try {
+        localStorage.setItem("theme", next ? "dark" : "light");
+      } catch {}
+      return next;
+    });
+  }, []);
 
   const load = useCallback(async (project: string | null) => {
     setLoading(true);
@@ -82,6 +99,7 @@ export default function Home() {
                 : "How that context is reused, decays, and goes cold — prompt caching, made tangible."}
             </p>
           </div>
+          <ThemeToggle dark={dark} onToggle={toggleTheme} />
         </motion.div>
       </header>
 
@@ -223,6 +241,30 @@ function StatPill({
         <span className="ml-1 text-[11px] font-normal text-stone-400">/ {total}</span>
       </p>
     </div>
+  );
+}
+
+function ThemeToggle({ dark, onToggle }: { dark: boolean; onToggle: () => void }) {
+  return (
+    <button
+      onClick={onToggle}
+      aria-label={dark ? "Switch to light theme" : "Switch to dark theme"}
+      title={dark ? "Light theme" : "Dark theme"}
+      className="ml-auto grid h-10 w-10 cursor-pointer place-items-center rounded-xl border border-line bg-paper text-stone-500 shadow-paper transition-colors hover:text-amber-700"
+    >
+      {dark ? (
+        // Sun
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="12" r="4" />
+          <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" />
+        </svg>
+      ) : (
+        // Moon
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" />
+        </svg>
+      )}
+    </button>
   );
 }
 

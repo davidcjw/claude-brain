@@ -82,8 +82,8 @@ function Synapse({
             ? "rgba(192,57,43,0.32)"
             : "var(--line)",
         background: lit
-          ? `linear-gradient(100deg, ${ring}0.07), #ffffff)`
-          : "#ffffff",
+          ? `linear-gradient(100deg, ${ring}0.07), var(--paper))`
+          : "var(--paper)",
         boxShadow:
           state === "firing"
             ? `0 0 0 1px ${ring}0.4), 0 8px 26px -10px ${ring}0.45)`
