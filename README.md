@@ -5,6 +5,8 @@
 ![Claude's Brain — the Cortex read-order sweep, then the Cache scenario player](docs/demo.gif)
 
 ![scope: global + current project](https://img.shields.io/badge/scope-global%20%2B%20project-22c55e)
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)
 
 ## Why
 
@@ -84,3 +86,23 @@ Nothing is sent or deployed. It reads your local disk and renders in the browser
 ## Stack
 
 Next.js 16 · React 19 · Tailwind CSS v4 · framer-motion (`motion`) · TypeScript. Local-first by design (needs filesystem access, so it is **not** meant for Vercel hosting).
+
+## Contributing
+
+Contributions are welcome! Please open an issue first to discuss what you'd like to change.
+
+1. Fork the repo
+2. Create a feature branch (`git checkout -b feature/your-feature`)
+3. Commit your changes (`git commit -m 'feat: describe change'`)
+4. Push and open a pull request
+
+Please make sure tests and `npm run lint` pass before submitting a PR.
+
+## Code of Conduct
+
+This project follows the [Contributor Covenant v2.1](https://www.contributor-covenant.org/version/2/1/code_of_conduct/).
+By participating you agree to uphold a welcoming, harassment-free environment.
+
+## License
+
+Distributed under the MIT License. See [LICENSE](LICENSE) for details.
