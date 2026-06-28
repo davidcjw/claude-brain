@@ -82,12 +82,24 @@ export const TIERS: {
   { name: "Global Memory", scope: "global", loadType: "startup", accent: "#c2410c", blurb: "Persisted facts recalled into context" },
   { name: "Global Config", scope: "global", loadType: "startup", accent: "#92400e", blurb: "Harness behaviour & MCP registry" },
   { name: "Project Instructions", scope: "project", loadType: "startup", accent: "#4d7c0f", blurb: "This repo's rules & guidance" },
+  { name: "Project Memory", scope: "project", loadType: "startup", accent: "#65a30d", blurb: "This repo's persisted facts, recalled into context" },
   { name: "Project Config", scope: "project", loadType: "startup", accent: "#3f6212", blurb: "Repo-scoped settings & MCP" },
   { name: "On-Demand", scope: "mixed", loadType: "on-demand", accent: "#78716c", blurb: "Loaded only when invoked" },
 ];
 
 function join(...parts: string[]): string {
   return parts.join("/").replace(/\/+/g, "/");
+}
+
+/**
+ * Claude Code's per-project storage slug: the project's absolute path with every
+ * non-alphanumeric character replaced by a dash. This is how Claude Code names
+ * the per-project dirs under ~/.claude/projects/ (transcripts + memory).
+ *   /Users/x/code/app → -Users-x-code-app
+ *   /Users/x/.claude  → -Users-x--claude   (the "." also becomes "-", no collapsing)
+ */
+export function projectSlug(project: string): string {
+  return project.replace(/[^a-zA-Z0-9]/g, "-");
 }
 
 type RawEntry = Omit<CatalogEntry, "order" | "mechanism">;
@@ -206,6 +218,7 @@ export function buildCatalog(home: string, project: string | null): CatalogEntry
 
   if (project) {
     const projClaude = join(project, ".claude");
+    const projMemory = join(dotClaude, "projects", projectSlug(project), "memory");
     raw.push(
       // ── Project Instructions ──
       {
@@ -256,6 +269,34 @@ export function buildCatalog(home: string, project: string | null): CatalogEntry
         importance: "optional",
         contentExt: ".md",
         description: "Project-specific rule files.",
+      },
+      // ── Project Memory ──
+      {
+        id: "p-memory-index",
+        label: "memory/MEMORY.md",
+        scope: "project",
+        category: "Memory",
+        tier: "Project Memory",
+        loadType: "startup",
+        path: join(projMemory, "MEMORY.md"),
+        type: "file",
+        importance: "core",
+        description:
+          "Per-project auto-memory index, recalled into context each session for this repo.",
+      },
+      {
+        id: "p-memory-dir",
+        label: "memory/",
+        scope: "project",
+        category: "Memory",
+        tier: "Project Memory",
+        loadType: "startup",
+        path: projMemory,
+        type: "dir",
+        importance: "optional",
+        contentExt: ".md",
+        description:
+          "Individual per-project memory facts, stored under ~/.claude/projects/<slug>/memory/.",
       },
       // ── Project Config ──
       {

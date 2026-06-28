@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { buildCatalog, TIERS } from "./catalog";
+import { buildCatalog, projectSlug, TIERS } from "./catalog";
 
 const HOME = "/home/u";
 const PROJ = "/home/u/code/app";
@@ -54,6 +54,28 @@ describe("buildCatalog", () => {
     expect(byId("g-memory-index").mechanism).toBe("prompt");
     expect(byId("g-rules").mechanism).toBe("prompt");
     expect(byId("p-agents-md").mechanism).toBe("prompt");
+    expect(byId("p-memory-index").mechanism).toBe("prompt");
+    expect(byId("p-memory-dir").mechanism).toBe("prompt");
+  });
+
+  it("derives the project slug by replacing every non-alphanumeric char with a dash", () => {
+    expect(projectSlug("/home/u/code/app")).toBe("-home-u-code-app");
+    // the "." is also replaced, and dashes are not collapsed
+    expect(projectSlug("/Users/x/.claude")).toBe("-Users-x--claude");
+  });
+
+  it("resolves per-project memory under ~/.claude/projects/<slug>/memory", () => {
+    const e = buildCatalog(HOME, PROJ);
+    const idx = e.find((x) => x.id === "p-memory-index")!;
+    expect(idx.path).toBe("/home/u/.claude/projects/-home-u-code-app/memory/MEMORY.md");
+    const dir = e.find((x) => x.id === "p-memory-dir")!;
+    expect(dir.path).toBe("/home/u/.claude/projects/-home-u-code-app/memory");
+  });
+
+  it("omits per-project memory when no project is given", () => {
+    const e = buildCatalog(HOME, null);
+    expect(e.find((x) => x.id === "p-memory-index")).toBeUndefined();
+    expect(e.find((x) => x.id === "p-memory-dir")).toBeUndefined();
   });
 
   it("classifies mechanism: settings/keybindings/MCP = harness", () => {
