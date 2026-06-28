@@ -8,6 +8,18 @@
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 ![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)
 
+## Contents
+
+- [Why](#why)
+- [The visualization](#the-visualization)
+- [What it tracks](#what-it-tracks)
+- [Run it](#run-it)
+- [How it works](#how-it-works)
+- [Stack](#stack)
+- [Contributing](#contributing)
+- [Code of Conduct](#code-of-conduct)
+- [License](#license)
+
 ## Why
 
 Claude Code loads context from a sprawl of files across `~/.claude/`, `~/.claude.json` and per-project `.claude/` directories. It's hard to know what's actually in play — and in what order. This gives you a single animated screen: a vertical "cortex" spine carries a traveling pulse down through ordered strata (global → project → on-demand), lighting each file as it's read.
@@ -37,6 +49,7 @@ The app has two tabs:
 
 **Project (`<project>/`)**
 - `CLAUDE.md` · `CLAUDE.local.md` · `AGENTS.md`
+- `~/.claude/projects/<slug>/memory/MEMORY.md` + `memory/` (per-project memory, keyed to the directory you launch `claude` from)
 - `.claude/settings.json` · `.claude/settings.local.json` · `.mcp.json`
 - `.claude/rules/` · `.claude/agents/` · `.claude/commands/` · `.claude/skills/` · `.claude/hooks/`
 
@@ -96,7 +109,7 @@ Contributions are welcome! Please open an issue first to discuss what you'd like
 3. Commit your changes (`git commit -m 'feat: describe change'`)
 4. Push and open a pull request
 
-Please make sure tests and `npm run lint` pass before submitting a PR.
+Please make sure the tests pass (`npm test`) before submitting a PR.
 
 ## Code of Conduct
 
